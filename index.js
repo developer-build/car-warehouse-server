@@ -37,7 +37,7 @@ async function run () {
       res.send(result);
     });
 
-    app.put('/inventory/:id', async (req, res) => {
+    app.put('/items/:id', async (req, res) => {
       const id = req.params.id
       const updateStock = req.body;
       const filter = {_id: ObjectId(id)};
@@ -45,7 +45,29 @@ async function run () {
       const updateDoc = {$set: updateStock};
       const result = await itemsCollection.updateOne(filter, updateDoc, options)
       res.send(result)
-    })
+    });
+
+   app.post('/items' , async(req, res) => {
+     const newItem = req.body;
+     console.log(newItem);
+     const result = await itemsCollection.insertOne(newItem);
+     res.send(result)
+   });
+
+   app.delete('/items/:id', async (req, res) => {
+     const id = req.params.id;
+     console.log(id);
+     const query = {_id: ObjectId(id)}
+     const result = await itemsCollection.deleteOne(query);
+     res.send(result)
+   });
+
+  //  app.get('/inventory/:id', async (req, res) => {
+  //    const id = req.params.id;
+  //    const query = {_id: ObjectId(id)}
+  //    const result = await itemsCollection.findOne(query);
+  //    res.send(result)
+  //  });
 
   }
   finally{

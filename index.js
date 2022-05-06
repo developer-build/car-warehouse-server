@@ -45,7 +45,7 @@ async function run () {
       const updateDoc = {$set: updateStock};
       const result = await itemsCollection.updateOne(filter, updateDoc, options)
       res.send(result)
-    });
+    })
 
    app.post('/items' , async(req, res) => {
      const newItem = req.body;

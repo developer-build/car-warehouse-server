@@ -59,6 +59,7 @@ async function run() {
     app.post("/items", async (req, res) => {
       const newItem = req.body;
       console.log(newItem);
+      console.log(newItem);
       const result = await itemsCollection.insertOne(newItem);
       res.send(result);
     });
@@ -73,10 +74,11 @@ async function run() {
     });
 
     // my items
-    app.get("/items", async (req, res) => {
+    app.get("/myItems", async (req, res) => {
       const email = req.query.email;
-      const query = { email };
-      const cursor = userCollection.find(query);
+      console.log(email);
+      const query = { email: email };
+      const cursor = itemsCollection.find(query);
       const result = await cursor.toArray(cursor);
       res.send(result);
     });

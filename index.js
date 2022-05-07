@@ -3,10 +3,19 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
+const jwt = require("jsonwebtoken");
 
 // middleware
 app.use(cors());
 app.use(express.json());
+
+app.post("/login", (req, res) => {
+  const user = req.body;
+  const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
+    expiresIn: "2d",
+  });
+  res.send({ accessToken });
+});
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dh4fn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -15,6 +24,23 @@ const client = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+
+// verify Json Web Token :
+function verifyJwt(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send([{ message: "your authorization filed" }]);
+  }
+
+  const token = authHeader.split(" ")[1];
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+    if (err) {
+      return res.status(403).send([{ message: "please valid token provide" }]);
+    }
+    req.decoded = decoded;
+    next();
+  });
+}
 
 async function run() {
   try {
@@ -74,13 +100,18 @@ async function run() {
     });
 
     // my items
-    app.get("/myItems", async (req, res) => {
-      const email = req.query.email;
-      console.log(email);
-      const query = { email: email };
-      const cursor = itemsCollection.find(query);
-      const result = await cursor.toArray(cursor);
-      res.send(result);
+    app.get("/my-items", verifyJwt, async (req, res) => {
+      const decodedEmail = req.decoded.email;
+      const email = req.query;
+      console.log( email);
+      if (decodedEmail === email?.email) {
+        const query = { email: email?.email };
+        const cursor = itemsCollection.find(query);
+        const result = await cursor.toArray(cursor);
+        res.send(result);
+      } else {
+        res.status(403).send([{ message: "not valid token" }]);
+      }
     });
   } finally {
     // await client.close();

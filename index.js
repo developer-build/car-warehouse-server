@@ -14,7 +14,7 @@ app.post("/login", (req, res) => {
   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
     expiresIn: "2d",
   });
-  res.send({ accessToken });
+  res.send({ accessToken })
 });
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
@@ -84,8 +84,6 @@ async function run() {
     // post items
     app.post("/items", async (req, res) => {
       const newItem = req.body;
-      console.log(newItem);
-      console.log(newItem);
       const result = await itemsCollection.insertOne(newItem);
       res.send(result);
     });

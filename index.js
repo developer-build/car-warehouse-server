@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken")
 
 // middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json())
 
 app.post("/login", (req, res) => {
   const user = req.body;
@@ -108,7 +108,7 @@ async function run() {
         const result = await cursor.toArray(cursor);
         res.send(result);
       } else {
-        res.status(403).send([{ message: "not valid token" }]);
+        res.status(403).send([{ message: "not valid token" }])
       }
     });
   } finally {

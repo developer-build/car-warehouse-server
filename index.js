@@ -110,7 +110,7 @@ async function run() {
       } else {
         res.status(403).send([{ message: "not valid token" }])
       }
-    });
+    })
   } finally {
     // await client.close();
   }

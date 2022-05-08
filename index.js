@@ -94,7 +94,7 @@ async function run() {
       console.log(id);
       const query = { _id: ObjectId(id) };
       const result = await itemsCollection.deleteOne(query);
-      res.send(result);
+      res.send(result)
     });
 
     // my items
@@ -103,9 +103,9 @@ async function run() {
       const email = req.query;
       console.log( email);
       if (decodedEmail === email?.email) {
-        const query = { email: email?.email };
+        const query = { email: email?.email }
         const cursor = itemsCollection.find(query);
-        const result = await cursor.toArray(cursor);
+        const result = await cursor.toArray(cursor)
         res.send(result);
       } else {
         res.status(403).send([{ message: "not valid token" }])

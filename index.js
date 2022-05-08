@@ -3,22 +3,19 @@ const cors = require("cors");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 const app = express();
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 // middleware
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 
 app.post("/login", (req, res) => {
   const user = req.body;
   const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, {
     expiresIn: "2d",
   });
-  res.send({ accessToken })
+  res.send({ accessToken });
 });
-
-
-
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.dh4fn.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
@@ -97,23 +94,23 @@ async function run() {
       console.log(id);
       const query = { _id: ObjectId(id) };
       const result = await itemsCollection.deleteOne(query);
-      res.send(result)
+      res.send(result);
     });
 
     // my items
     app.get("/my-items", verifyJwt, async (req, res) => {
-      const decodedEmail = req.decoded.email;
-      const email = req.query;
-      console.log( email);
+      const decodedEmail = req.decoded.email
+      const email = req.query
+      console.log(email)
       if (decodedEmail === email?.email) {
-        const query = { email: email?.email }
+        const query = { email: email?.email };
         const cursor = itemsCollection.find(query);
-        const result = await cursor.toArray(cursor)
+        const result = await cursor.toArray(cursor);
         res.send(result);
       } else {
-        res.status(403).send([{ message: "not valid token" }])
+        res.status(403).send([{ message: "not valid token" }]);
       }
-    })
+    });
   } finally {
     // await client.close();
   }
@@ -123,5 +120,3 @@ run().catch(console.dir);
 app.listen(port, () => {
   console.log("This server is listening", port);
 });
-
-
